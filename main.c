@@ -188,13 +188,31 @@ case 3:
                 scanf("%d", &mdp_entre_suppr);
                 
                 if(mdp_entre_suppr == mdp_suppr) {
-                    remove(FICHIER_UTILISATEURS);
-                    printf("Tous les comptes ont ete supprimes\n");
+
+                    printf("Voulez-vous vraiment supprimer tous les comptes ? (o/n)\n");
+                    char reponse;
                     fflush(stdin);
-                    printf("Appuyez sur une entrer pour continuer...\n");
-                    getchar();
-                    system("cls");
-                    break;
+                    scanf("%c", &reponse);
+                    if (reponse == 'o') {
+
+                        remove(FICHIER_UTILISATEURS);
+                        printf("Tous les comptes ont ete supprimes\n");
+                        fflush(stdin);
+                        printf("Appuyez sur une entrer pour continuer...\n");
+                        getchar();
+                        system("cls");
+                        break;
+                    }
+
+                    if (reponse == 'n') {
+                        printf("Les comptes n'ont pas ete supprimes\n");
+                        fflush(stdin);
+                        printf("Appuyez sur une entrer pour continuer...\n");
+                        getchar();
+                        system("cls");
+                        break;
+                    }
+                    
                 }
                 
                 
