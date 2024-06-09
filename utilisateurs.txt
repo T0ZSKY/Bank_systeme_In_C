@@ -1,2 +1,2 @@
-admin;admin;999
-tom;tom;200
+limon;tom;900
+admin;admin;0

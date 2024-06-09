@@ -21,6 +21,39 @@ void bleu() {
     printf("\033[34m");
 }
 
+void randomColor() {
+    srand(time(NULL));
+    int r = rand() % 7;
+    switch (r) {
+        case 0:
+            printf("\033[31m");
+            break;
+        case 1:
+            printf("\033[32m");
+            break;
+        case 2:
+            printf("\033[33m");
+            break;
+        case 3:
+            printf("\033[34m");
+            break;
+        case 4:
+            printf("\033[35m");
+            break;
+        case 5:
+            printf("\033[36m");
+            break;
+        case 6:
+            printf("\033[37m");
+            break;
+    }
+}
+
+void viderTampon() {
+    int c;
+    while ((c = getchar()) != '\n' && c != EOF);
+}
+
 int main() {
     int choix1 = 0;
     char nom[20];
@@ -47,14 +80,15 @@ int main() {
         bleu();
         printf("1. Creer un compte\n");
         printf("2. Consulter un compte\n");
-        printf("3. Panel administrateur\n");
-        printf("4. Quitter\n");
+        printf("3. Faire un virement\n");
+        printf("4. Panel administrateur\n");
         printf("5. Supprimer tout les comptes\n");
-        printf("6. Faire un virement\n");
+        printf("6. Quitter\n");
         printf("Votre choix : ");
         reset();
 
         scanf("%d", &choix1);
+        viderTampon(); 
 
         switch (choix1) {
             case 1:
@@ -124,7 +158,7 @@ int main() {
                 }
                 break;
 
-            case 3:
+            case 4:
                 system("cls");
                 printf("rentrer le mdp admin :\n");
                 scanf("%d", &mdp_entre);
@@ -164,7 +198,7 @@ int main() {
                 }
                 break;
 
-            case 4:
+            case 6:
                 printf("Au revoir!\n");
                 return 0;
 
@@ -206,95 +240,113 @@ int main() {
                 }
                 break;
 
-            case 6:
-                printf("Entrez votre nom: ");
-                scanf("%s", nom);
-                printf("Entrez votre mot de passe: ");
-                scanf("%s", mdp);
+            case 3:
+    printf("Entrez votre nom: ");
+    scanf("%s", nom);
+    printf("Entrez votre mot de passe: ");
+    scanf("%s", mdp);
 
-                fichier = fopen(FICHIER_UTILISATEURS, "r");
-                if (fichier) {
-                    char ligne[1024];
-                    int trouve = 0;
-                    int solde_envoyeur = 0;
-                    char mdp_envoyeur[20];
-                    FILE *temp_fichier = fopen("temp.txt", "w");
-                    if (!temp_fichier) {
-                        printf("Erreur : impossible de créer un fichier temporaire\n");
-                        fclose(fichier);
-                        break;
-                    }
+    fichier = fopen(FICHIER_UTILISATEURS, "r");
+    if (fichier) {
+        char ligne[1024];
+        int trouve = 0;
+        int solde_envoyeur = 0;
+        char mdp_envoyeur[20];
+        FILE *temp_fichier = fopen("temp.txt", "w");
+        if (!temp_fichier) {
+            printf("Erreur : impossible de créer un fichier temporaire\n");
+            fclose(fichier);
+            break;
+        }
 
-                    while (fgets(ligne, 1024, fichier)) {
-                        char nom_lu[20], mdp_lu[20];
-                        int solde_lu;
-                        sscanf(ligne, "%[^;];%[^;];%d", nom_lu, mdp_lu, &solde_lu);
+        while (fgets(ligne, 1024, fichier)) {
+            char nom_lu[20], mdp_lu[20];
+            int solde_lu;
+            sscanf(ligne, "%[^;];%[^;];%d", nom_lu, mdp_lu, &solde_lu);
 
-                        if (strcmp(nom_lu, nom) == 0 && strcmp(mdp_lu, mdp) == 0) {
-                            printf("Connexion reussie!\n");
-                            printf("Solde du compte : %d\n", solde_lu);
-                            solde_envoyeur = solde_lu;
-                            strcpy(mdp_envoyeur, mdp_lu);
-                            trouve = 1;
-                        }
+            if (strcmp(nom_lu, nom) == 0 && strcmp(mdp_lu, mdp) == 0) {
+                printf("Connexion reussie!\n");
+                printf("Solde du compte : %d\n", solde_lu);
+                solde_envoyeur = solde_lu;
+                strcpy(mdp_envoyeur, mdp_lu);
+                trouve = 1;
+            }
 
-                        fprintf(temp_fichier, "%s;%s;%d\n", nom_lu, mdp_lu, solde_lu);
-                    }
+            fprintf(temp_fichier, "%s;%s;%d\n", nom_lu, mdp_lu, solde_lu);
+        }
 
-                    fclose(fichier);
-                    fclose(temp_fichier);
+        fclose(fichier);
+        fclose(temp_fichier);
 
-                    if (trouve) {
-                        char nom_receveur[20];
-                        int montant_virement;
-                        printf("Entrez le nom du compte receveur: ");
-                        scanf("%s", nom_receveur);
-                        printf("Entrez le montant du virement: ");
-                        scanf("%d", &montant_virement);
+        if (trouve) {
+            char nom_receveur[20];
+            int montant_virement;
+            printf("Entrez le nom du compte receveur: ");
+            scanf("%s", nom_receveur);
+            printf("Entrez le montant du virement: ");
+            scanf("%d", &montant_virement);
 
-                        fichier = fopen("temp.txt", "r");
-                        temp_fichier = fopen(FICHIER_UTILISATEURS, "w");
-                        if (!fichier || !temp_fichier) {
-                            printf("Erreur : impossible de lire/écrire le fichier temporaire\n");
-                            if (fichier) fclose(fichier);
-                            if (temp_fichier) fclose(temp_fichier);
-                            break;
-                        }
-
-                        int trouve_receveur = 0;
-                        while (fgets(ligne, 1024, fichier)) {
-                            char nom_lu[20], mdp_lu[20];
-                            int solde_lu;
-                            sscanf(ligne, "%[^;];%[^;];%d", nom_lu, mdp_lu, &solde_lu);
-
-                            if (strcmp(nom_lu, nom) == 0 && strcmp(mdp_lu, mdp) == 0) {
-                                solde_lu = solde_envoyeur - montant_virement;
-                            } else if (strcmp(nom_lu, nom_receveur) == 0) {
-                                solde_lu += montant_virement;
-                                trouve_receveur = 1;
-                            }
-
-                            fprintf(temp_fichier, "%s;%s;%d\n", nom_lu, mdp_lu, solde_lu);
-                        }
-
-                        fclose(fichier);
-                        fclose(temp_fichier);
-
-                        if (trouve_receveur) {
-                            printf("Virement reussi!\n");
-                            remove("temp.txt");
-                        } else {
-                            printf("Erreur : compte receveur non trouvé\n");
-                            remove(FICHIER_UTILISATEURS);
-                            rename("temp.txt", FICHIER_UTILISATEURS);
-                        }
-                    } else {
-                        printf("Erreur : compte non trouvé\n");
-                    }
-                } else {
-                    printf("Erreur : impossible de lire le fichier\n");
+            if (solde_envoyeur >= montant_virement) {
+                fichier = fopen("temp.txt", "r");
+                temp_fichier = fopen(FICHIER_UTILISATEURS, "w");
+                if (!fichier || !temp_fichier) {
+                    printf("Erreur : impossible de lire/écrire le fichier temporaire\n");
+                    if (fichier) fclose(fichier);
+                    if (temp_fichier) fclose(temp_fichier);
+                    break;
                 }
-                break;
+
+                int trouve_receveur = 0;
+                while (fgets(ligne, 1024, fichier)) {
+                    char nom_lu[20], mdp_lu[20];
+                    int solde_lu;
+                    sscanf(ligne, "%[^;];%[^;];%d", nom_lu, mdp_lu, &solde_lu);
+
+                    if (strcmp(nom_lu, nom) == 0 && strcmp(mdp_lu, mdp) == 0) {
+                        solde_lu = solde_envoyeur - montant_virement;
+                    } else if (strcmp(nom_lu, nom_receveur) == 0) {
+                        solde_lu += montant_virement;
+                        trouve_receveur = 1;
+                    }
+
+                    fprintf(temp_fichier, "%s;%s;%d\n", nom_lu, mdp_lu, solde_lu);
+                }
+
+                fclose(fichier);
+                fclose(temp_fichier);
+
+                if (trouve_receveur) {
+                    printf("Virement reussi!\n");
+                    remove("temp.txt");
+                } else {
+                    printf("Erreur : compte receveur non trouvé\n");
+                    remove(FICHIER_UTILISATEURS);
+                    rename("temp.txt", FICHIER_UTILISATEURS);
+                }
+            } else {
+                printf("Erreur : fonds insuffisants pour effectuer le virement\n");
+            }
+        } else {
+            printf("Erreur : compte non trouvé\n");
+        }
+    } else {
+        printf("Erreur : impossible de lire le fichier\n");
+    }
+    break;
+
+
+
+        case 1508:
+            system("cls");
+            randomColor();
+            printf("easteregg !\n");
+            printf("mdp admin : 1234\n");
+            printf("mdp suppr : 4321\n");
+            fflush(stdin);
+            printf("Appuyez sur une entrer pour continuer...\n");
+            reset();
+            getchar();
+            break;
 
             default:
                 printf("Erreur : choix invalide\n");
