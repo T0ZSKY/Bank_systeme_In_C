@@ -1,2 +1,2 @@
-limon;tom;900
-admin;admin;0
+arcidet;valou;800
+limon;tom;0
